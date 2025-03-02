@@ -77,7 +77,7 @@ export class AuthController {
     this.logger.log(`Login attempt for user: ${email}`);
     const accessToken = await this.authService.signIn(email, password);
     this.logger.log(`Login successful for user: ${email}`);
-    res.cookie('jwt', accessToken, { httpOnly: true, sameSite: 'strict' });
+    res.cookie('jwt', accessToken, { httpOnly: true, secure: true });
     return res.send({ message: 'User successfully signed in' });
   }
 }
