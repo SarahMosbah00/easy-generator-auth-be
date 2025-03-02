@@ -7,5 +7,5 @@ export interface UserRepository {
     findById(id: string): Promise<UserModel | null>;
     findByVerificationToken(verificationToken: string): Promise<UserModel | null>;
     verifyUser(id: string): Promise<void>;
-    delete(id: string): Promise<UserModel | null>;
+    deleteByEmail(email: string): Promise<UserModel | null>;
 }

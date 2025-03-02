@@ -14,9 +14,12 @@ export class MongoUserRepository implements UserRepository {
     private readonly usersModel: Model<UserEntity>,
   ) {}
 
-
-  public async findByVerificationToken(verificationToken: string): Promise<UserModel | null> {
-    const userEntity = await this.usersModel.findOne({ verificationToken }).exec();
+  public async findByVerificationToken(
+    verificationToken: string,
+  ): Promise<UserModel | null> {
+    const userEntity = await this.usersModel
+      .findOne({ verificationToken })
+      .exec();
     return userEntity ? UserMapper.toModel(userEntity) : null;
   }
 
@@ -41,17 +44,20 @@ export class MongoUserRepository implements UserRepository {
   public async verifyUser(id: string): Promise<void> {
     const _id = new Types.ObjectId(id);
     await this.usersModel.findByIdAndUpdate(_id, { isVerified: true }).exec();
-    
   }
 
-  public async updateRefreshToken(id: string, refreshTokenHash: string): Promise<void> {
+  public async updateRefreshToken(
+    id: string,
+    refreshTokenHash: string,
+  ): Promise<void> {
     const _id = new Types.ObjectId(id);
     await this.usersModel.findByIdAndUpdate(_id, { refreshTokenHash });
   }
 
-  public async delete(id: string): Promise<UserModel | null> {
-    const _id = new Types.ObjectId(id);
-    const deletedUser = await this.usersModel.findByIdAndDelete(_id).exec();
+  public async deleteByEmail(email: string): Promise<UserModel | null> {
+    const deletedUser = await this.usersModel
+      .findOneAndDelete({ email })
+      .exec();
     return deletedUser ? UserMapper.toModel(deletedUser) : null;
   }
 }

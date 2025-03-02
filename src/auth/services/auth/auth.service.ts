@@ -12,15 +12,25 @@ import { UserRepository } from '../../repositories/user-repository.interface';
 import { UserModel } from '../../models/user.model';
 import { CREATE_USER_OMIT_PROPERTIES } from '../../constants/mapped-types';
 import { EmailService } from '../email/email.interface';
+import { EMAIL_SERVICE_INJECTION_TOKEN } from 'src/auth/constants/injection-tokens';
+import { ConfigService } from '@nestjs/config';
+import { EnvironmentVariables } from 'src/auth/constants/environment-variables';
 
 @Injectable()
 export class DefaultAuthService implements AuthService {
+  private privateKey: string;
+
   constructor(
     private readonly jwtService: JwtService,
-    @Inject('EMAIL_SERVICE') private readonly emailService: EmailService,
+    @Inject('EMAIL_SERVICE')
+    private readonly emailService: EmailService,
     @Inject('USERS_REPOSITORY') private readonly userRepository: UserRepository,
-    
-  ) {}
+    private readonly configService: ConfigService<EnvironmentVariables>,
+  ) {
+    this.privateKey = this.configService.getOrThrow('JWT_PRIVATE_SECRET', {
+      infer: true,
+    });
+  }
 
   public async signUp(
     userToCreate: Omit<UserModel, (typeof CREATE_USER_OMIT_PROPERTIES)[number]>,
@@ -40,11 +50,11 @@ export class DefaultAuthService implements AuthService {
       verificationToken,
     });
 
-   // Can Implement a session and commit it only after sending verification mail
+    // Can Implement a session and commit it only after sending verification mail
     try {
       await this.emailService.sendVerificationMail(email, verificationToken);
     } catch (e) {
-      await this.userRepository.delete(email);
+      await this.userRepository.deleteByEmail(email);
       throw new BadRequestException('Failed to send verification email');
     }
   }
@@ -58,13 +68,19 @@ export class DefaultAuthService implements AuthService {
     }
 
     const { id, username, isVerified } = user;
-
-    const accessToken = this.jwtService.sign({
-      id,
-      email,
-      username,
-      isVerified,
+    const expiresIn = this.configService.get('JWT_EXPIRATION', '3600s', {
+      infer: true,
     });
+    
+    const accessToken = this.jwtService.sign(
+      {
+        id,
+        email,
+        username,
+        isVerified,
+      },
+      { algorithm: 'RS256', privateKey: this.privateKey, expiresIn },
+    );
 
     return accessToken;
   }

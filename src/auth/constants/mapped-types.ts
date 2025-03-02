@@ -11,7 +11,7 @@ export const CREATE_USER_OMIT_PROPERTIES = [
 
 
 export const CREATE_USER_ENTITY_OMIT_PROPERTIES = [
-    'id',
+    '_id',
     'createdAt',
     'updatedAt',
     'isVerified',  

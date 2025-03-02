@@ -1,4 +1,3 @@
-import { Provider } from '@nestjs/common';
 import { MongoUserRepository } from '../repositories/mongo-user.repository';
 import { NodeMailerEmailService } from '../services/email/nodemailer-email.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -13,20 +12,20 @@ export const AUTH_SERVICE_INJECTION_TOKEN = 'AUTH_SERVICE';
 export const USERS_REPOSITORY = {
   provide: USERS_REPOSITORY_INJECTION_TOKEN,
   useClass: MongoUserRepository,
-} ;
+};
 
 export const AUTH_SERVICE = {
   provide: AUTH_SERVICE_INJECTION_TOKEN,
   useClass: DefaultAuthService,
-} ;
+};
 
-export const EMAIL_SERVICE =    {
-    provide: EMAIL_SERVICE_INJECTION_TOKEN,
-    useClass: NodeMailerEmailService, 
+export const EMAIL_SERVICE = {
+  provide: EMAIL_SERVICE_INJECTION_TOKEN,
+  useClass: NodeMailerEmailService,
 };
 
 export const JWT_FACTORY = {
-    imports: [ConfigModule],
+  imports: [ConfigModule],
   useFactory: async (configService: ConfigService<EnvironmentVariables>) => {
     return {
       privateKey: configService.getOrThrow('JWT_PRIVATE_SECRET', {
@@ -39,7 +38,9 @@ export const JWT_FACTORY = {
         expiresIn: configService.getOrThrow('JWT_EXPIRATION', {
           infer: true,
         }),
+        algorithm: 'RS256',
       },
+
     };
   },
   inject: [ConfigService],

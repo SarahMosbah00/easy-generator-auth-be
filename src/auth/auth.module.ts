@@ -10,17 +10,32 @@ import {
   AUTH_SERVICE,
 } from './constants/injection-tokens';
 
-import { UserModel } from './entities/user.entity';
+import { USER_SCHEMA_DEFINATION } from './entities/user.entity';
 import { AuthController } from './controllers/auth.controller';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './guards/jwt-bearer-auth.guard';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './stratigies/cookies-jwt.strategy';
 
 @Module({
   imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forFeature([UserModel]),
+    MongooseModule.forFeature([USER_SCHEMA_DEFINATION]),
     JwtModule.registerAsync(JWT_FACTORY),
   ],
 
-  providers: [AUTH_SERVICE, EMAIL_SERVICE, USERS_REPOSITORY, ConfigService],
+  providers: [
+    JwtStrategy,
+    AUTH_SERVICE,
+    EMAIL_SERVICE,
+    USERS_REPOSITORY,
+    ConfigService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
   controllers: [AuthController],
   exports: [],
 })

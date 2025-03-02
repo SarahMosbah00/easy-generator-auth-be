@@ -1,10 +1,11 @@
 import { ModelDefinition, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Types } from 'mongoose';
 
 @Schema({
   timestamps: true,
 })
-export class User extends Document {
+export class User {
+  public readonly _id?: Types.ObjectId;
   @Prop({ required: true, unique: true, minlength: 3, trim: true })
   username: string;
 
@@ -37,7 +38,7 @@ export class User extends Document {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
-export const UserModel = {
+export const USER_SCHEMA_DEFINATION = {
   name: User.name,
   schema: UserSchema,
 } satisfies ModelDefinition;

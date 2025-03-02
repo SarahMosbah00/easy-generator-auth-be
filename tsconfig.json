@@ -12,7 +12,8 @@
       "baseUrl": "./",
       "incremental": true,
       "module": "commonjs",
-      "moduleResolution": "node"
+      "moduleResolution": "node",
+      "target": "es6"
   },
   "watchOptions": {
       "watchFile": "fixedPollingInterval"
