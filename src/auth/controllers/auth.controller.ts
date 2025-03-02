@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query, Res, Logger } from '@nestjs/common';
 import {
   AUTH_SERVICE,
   AUTH_SERVICE_INJECTION_TOKEN,
@@ -14,6 +14,8 @@ import { Response } from 'express';
 @ApiTags('Users')
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(
     @Inject(AUTH_SERVICE_INJECTION_TOKEN)
     private readonly authService: AuthService,
@@ -38,7 +40,10 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'User successfully signed up' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   signUp(@Body() createUserDto: CreateUserDto) {
-    return this.authService.signUp(createUserDto);
+    this.logger.log(`Registration attempt for user: ${createUserDto.email}`);
+    const result = this.authService.signUp(createUserDto);
+    this.logger.log(`Registration successful for user: ${createUserDto.email}`);
+    return result;
   }
 
   @Public()
@@ -70,7 +75,9 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'User successfully signed in' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   async signIn(@Body() { email, password }: SignInDto, @Res() res: Response) {
+    this.logger.log(`Login attempt for user: ${email}`);
     const accessToken = await this.authService.signIn(email, password);
+    this.logger.log(`Login successful for user: ${email}`);
     res.cookie('jwt', accessToken, { httpOnly: true, sameSite: 'strict' });
     return res.send({ message: 'User successfully signed in' });
   }

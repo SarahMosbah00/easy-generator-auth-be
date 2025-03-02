@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
@@ -8,6 +8,8 @@ import { UserAccount } from '../interfaces/user-account.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+  private readonly logger = new Logger(JwtStrategy.name);
+
   constructor(
     private readonly configService: ConfigService<EnvironmentVariables>,
   ) {
@@ -29,8 +31,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   async validate(payload: UserAccount) {
     if (!payload) {
+      this.logger.warn('Invalid JWT payload');
       throw new UnauthorizedException();
     }
+    this.logger.log(`JWT validated for user: ${payload.email}`);
     return payload;
   }
 }
