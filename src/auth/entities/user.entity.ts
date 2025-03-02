@@ -6,7 +6,7 @@ import { Types } from 'mongoose';
 })
 export class User {
   public readonly _id?: Types.ObjectId;
-  @Prop({ required: true, unique: true, minlength: 3, trim: true })
+  @Prop({ required: true, minlength: 3, trim: true })
   username: string;
 
   @Prop({
