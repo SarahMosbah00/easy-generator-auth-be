@@ -36,7 +36,7 @@ export class NodeMailerEmailService implements EmailService {
 
 
   async sendVerificationMail(email: string, token: string): Promise<void> {
-    const verificationUrl = `${this.appDomain}/auth/verify-email?token=${token}`;
+    const verificationUrl = `${this.appDomain}/verify-email?token=${token}`;
 
     await this.transporter.sendMail({
       from: this.emailUser,

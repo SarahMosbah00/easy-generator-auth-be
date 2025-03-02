@@ -39,11 +39,10 @@ export class AuthController {
   })
   @ApiResponse({ status: 201, description: 'User successfully signed up' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
-  signUp(@Body() createUserDto: CreateUserDto) {
+  async signUp(@Body() createUserDto: CreateUserDto): Promise<void> {
     this.logger.log(`Registration attempt for user: ${createUserDto.email}`);
-    const result = this.authService.signUp(createUserDto);
+    await this.authService.signUp(createUserDto);
     this.logger.log(`Registration successful for user: ${createUserDto.email}`);
-    return result;
   }
 
   @Public()
