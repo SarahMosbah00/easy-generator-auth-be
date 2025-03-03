@@ -53,7 +53,7 @@ This is the backend application for Easy Generator Auth, built with NestJS. It p
 ## API Documentation
 
 The API documentation is available at the following endpoint:
-- [Swagger UI](http://localhost:3000/api-docs)
+- http://API_URL/api-docs
 
 ## Usage
 
