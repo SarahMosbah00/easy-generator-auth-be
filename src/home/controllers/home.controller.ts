@@ -13,7 +13,7 @@ export class HomeController {
   getHome(@User() user: UserAccount) {
     this.logger.log(`Home page accessed by user: ${user.email}`);
     return {
-      message: `Welcome to the home page ${user.email}!`
+      message: `Welcome to the home page ${user.username}!`
     };
   }
 }

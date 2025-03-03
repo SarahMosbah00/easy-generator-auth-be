@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post, Query, Res, Logger } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query, Res, Logger, Req } from '@nestjs/common';
 import {
   AUTH_SERVICE,
   AUTH_SERVICE_INJECTION_TOKEN,
@@ -79,5 +79,16 @@ export class AuthController {
     this.logger.log(`Login successful for user: ${email}`);
     res.cookie('jwt', accessToken, { httpOnly: true, secure: true });
     return res.send({ message: 'User successfully signed in' });
+  }
+
+
+
+  @Get('signout')
+  @ApiOperation({ summary: 'Logging Out' })
+  @ApiResponse({ status: 200, description: 'User Logged Out Succesfully' })
+  @ApiResponse({ status: 400, description: 'Invalid or expired token' })
+  signout(@Res() res: Response) {
+    res.clearCookie('jwt');
+    return res.send({ message: 'User successfully signed out' });
   }
 }
