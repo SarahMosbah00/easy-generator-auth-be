@@ -88,5 +88,5 @@ The API documentation is available at the following endpoint:
 ### Access Home Page
 
 - **Endpoint**: `GET /home`
-- **Headers**: `Cookie: jwt=yourJwtToken`
+- **Cookie**: `Cookie: jwt=yourJwtToken`
 
